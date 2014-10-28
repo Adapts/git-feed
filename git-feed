@@ -131,39 +131,39 @@ $title = slurp("$repo_base/.git/description")
 my $author = git_config('user.name');
 chomp($author);
 
-my $feed_link = git_config('feed.link');
-my $project_link = git_config('feed.projectlink');
+my $feed_url = git_config('feed.url');
+my $project_url = git_config('feed.projecturl');
 my $entries = 10;
 
 GetOptions(
-  "author:s"       => \$author,
-  "entries:i"      => \$entries,
-  "feed_link:s"    => \$feed_link,
-  "project_link:s" => \$project_link,
-  "title:s"        => \$title,
+  "author:s"    => \$author,
+  "entries:i"   => \$entries,
+  "feed_url"    => \$feed_url,
+  "project_url" => \$project_url,
+  "title:s"     => \$title,
 );
 
 # Where does this project live on the web?
-unless ($project_link) {
-  say "Project link required - use one of:";
-  say "\tgit feed --project_link=https://yourlinkhere/";
-  say "\tgit config feed.projectlink https://yourlinkhere/";
+unless ($project_url) {
+  say "Project URL required - use one of:";
+  say "\tgit feed --project_url=https://yourlinkhere/";
+  say "\tgit config feed.projecturl https://yourlinkhere/";
   exit(1);
 }
 
 # No feed link set?  Make something up.
-unless ($feed_link) {
-  $feed_link = $project_link . 'feed.xml';
+unless ($feed_url) {
+  $feed_url = $project_url . 'feed.xml';
 }
 
 my $log = capturex('git', 'log', "-$entries", qq{--pretty=format:%H _ %ai _ %s});
 
 my $feed = XML::Atom::SimpleFeed->new(
   title     => $title,
-  link      => $project_link,
-  link      => { rel => 'self', href => $feed_link, },
+  link      => $project_url,
+  link      => { rel => 'self', href => $feed_url, },
   author    => $author,
-  id        => $project_link,
+  id        => $project_url,
   generator => 'XML::Atom::SimpleFeed',
 
   # This could be better - just uses current time, at the moment:
@@ -185,7 +185,7 @@ while ($log =~ m/^([a-z0-9]+) _ (.*) _ (.*)$/gm) {
 
   $feed->add_entry(
     title     => $subj,
-    link      => $project_link,
+    link      => $project_url,
     id        => $hash,
     content   => $formatted_commit,
     updated   => $date,
