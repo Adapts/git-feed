@@ -10,6 +10,24 @@ git-feed [ B<--project_url=...> ]
 
 =head1 DESCRIPTION
 
+I keep a lot of projects in git, and I like to provide feeds for things I'm
+working on.  This script wraps git and XML::Atom::SimpleFeed to generate a
+basic Atom feed of commits.  It tries to use information already available in
+the environment, but needs to be given a URL for your project (and probably for
+the feed itself).
+
+It can be configured for a given repository by doing something like the
+following:
+
+  git config feed.projecturl https://p1k3.com/userland-book/
+  git config feed.url https://p1k3.com/userland-book/feed.xml
+  echo 'userland: a book about the command line for human beings' > .git/description
+
+I have I<no idea> whether this sort of thing is considered an acceptable use of 
+git configuration, but it seems to work.
+
+...or you can supply various options on the command line.
+
 B<--project_url=...>
 
 =over
@@ -55,6 +73,20 @@ user.name.
 =head1 EXAMPLES
 
     git feed --project_url=https://p1k3.com/userland-book/ > feed.xml
+
+=head1 INSTALLING
+
+I'll wrap this in a module and add a build script.  For now, install
+XML::Atom::SimpleFeed first.  I would probably do that either with:
+
+    cpanp -i XML::Atom::SimpleFeed
+
+or:
+
+    apt-get install libxml-atom-simplefeed-perl
+
+...depending on which one gave me less static on a given system.  I don't
+really know what I'm doing in the Perl ecosystem any more, though.
 
 =head1 AUTHOR
 
