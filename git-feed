@@ -108,9 +108,14 @@ use XML::Atom::SimpleFeed;
 use HTML::Entities;
 use Getopt::Long;
 use POSIX qw(strftime);
+
+# Turns out to be pretty much exactly what I want for system calls:
 use IPC::System::Simple qw(capturex);
 
-# Figure out where top-level .git resides:
+# Figure out where top-level .git/ resides.  Naturally, "rev-parse" was the
+# first command that leapt to mind when I wondered if there was a builtin way
+# to ask that question.  I mean, what kind of loser would have had to google
+# something so _blindingly obvious_?
 my $repo_base = git('rev-parse', '--show-toplevel');
 chomp($repo_base);
 
@@ -156,7 +161,7 @@ my $feed = XML::Atom::SimpleFeed->new(
   id        => $project_link,
   generator => 'XML::Atom::SimpleFeed',
 
-  # this could be better - just uses current time, at the moment:
+  # This could be better - just uses current time, at the moment:
   updated   => iso_date(time()),
 );
 
@@ -166,6 +171,12 @@ while ($log =~ m/^([a-z0-9]+) _ (.*) _ (.*)$/gm) {
   my $formatted_commit = '<pre>' . encode_entities($full_commit) . '</pre>';
   my $date = $2;
   my $subj = $3;
+
+  # Right now, this doesn't do anything clever with links for individual
+  # commits.  That's because I'm mostly using it for things that are single
+  # HTML files, so it doesn't seem to matter much.  It would probably be smart
+  # to let users specify a different base path for these so they can link
+  # GitHub or what-have-you.
 
   $feed->add_entry(
     title     => $subj,
@@ -183,7 +194,8 @@ sub iso_date {
   return strftime("%Y-%m-%dT%H:%M:%SZ", localtime($time));
 }
 
-# get the contents of a file
+# Get contents of a file as a string, because a File::Slurp dependency seemed
+# like overkill:
 sub slurp {
   my ($file) = @_;
   my $everything;
@@ -196,14 +208,15 @@ sub slurp {
   $everything = <$fh>;
 
   close $fh
-    or die "Couldn't close: $!";
+    or die "Couldn't close $file: $!";
 
   return $everything;
 }
 
-# run git with some options, return result
+# Run git with some options, return result:
 sub git { capturex('git', @_); }
 
+# Return a git config value - will be an empty string for unset values:
 sub git_config {
   my ($key) = @_;
   my $value = capturex([0,1], 'git', 'config', '--get', $key);
