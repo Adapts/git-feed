@@ -1,0 +1,67 @@
+=pod
+
+=head1 NAME
+
+git-feed - generate an Atom feed of git commits in the current repository
+
+=head1 SYNOPSIS
+
+git-feed [ B<--project_url=...> ]
+
+=head1 DESCRIPTION
+
+B<--project_url=...>
+
+=over
+
+Set a URL for the project.
+
+=back
+
+B<--feed_url=...>
+
+=over
+
+Set an explicit URL for the feed itself.
+
+=back
+
+B<--title=...>
+
+=over
+
+Set an explicit title for the feed.  Will otherwise be read from
+.git/description, if available.
+
+=back
+
+B<--entries=>I<n>
+
+=over
+
+Explicitly request I<n> entries.  Defaults to 10.
+
+=back
+
+B<--author=...>
+
+=over
+
+Explicitly set an author string.  Defaults to git config's current idea of
+user.name.
+
+=back
+
+=head1 EXAMPLES
+
+    git feed --project_url=https://p1k3.com/userland-book/ > feed.xml
+
+=head1 AUTHOR
+
+Brennen Bearnes <bbearnes@gmail.com>
+
+=head1 LICENSE
+
+This utility is free software, licensed under the terms of the GPL, v2.
+See COPYING for a complete copy of the license.
+
