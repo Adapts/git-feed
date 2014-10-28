@@ -106,6 +106,9 @@ See COPYING for a complete copy of the license.
 
 =cut
 
+# temporary hack
+# use lib '/home/brennen/code/perl_libs';
+
 use warnings;
 use strict;
 use 5.10.0;
@@ -138,8 +141,8 @@ my $entries = 10;
 GetOptions(
   "author:s"    => \$author,
   "entries:i"   => \$entries,
-  "feed_url"    => \$feed_url,
-  "project_url" => \$project_url,
+  "feed_url:s"    => \$feed_url,
+  "project_url:s" => \$project_url,
   "title:s"     => \$title,
 );
 
